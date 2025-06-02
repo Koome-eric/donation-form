@@ -5,8 +5,8 @@ function DonationForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [amount, setAmount] = useState('');
-  const [theme, setTheme] = useState('DefaultTheme'); // Added theme state
-  const cid = 'test_4175f07eb35e8d40ff70f79613a21861d2b78927f60a6bcb2813c5d54ac91042';
+  const [theme, setTheme] = useState('DefaultTheme');
+  const [cid, setCid] = useState(''); // <-- New state for cid
 
   // Register the custom theme once when the component mounts
   useEffect(() => {
@@ -22,7 +22,8 @@ function DonationForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Donation Details:', { name, email, amount });
+    console.log('Donation Details:', { name, email, amount, cid, theme });
+    // Here you might do additional validation or send data to your backend before invoking ChariotConnect
   };
 
   return (
@@ -30,6 +31,16 @@ function DonationForm() {
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
         <h1 className="text-3xl font-semibold mb-6 text-center">Support Our Cause</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* INPUT FOR CID */}
+          <input
+            type="text"
+            value={cid}
+            onChange={(e) => setCid(e.target.value)}
+            placeholder="Enter your cid here"
+            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+
+          {/* NAME, EMAIL, AMOUNT AS BEFORE */}
           <input
             type="text"
             value={name}
@@ -51,7 +62,8 @@ function DonationForm() {
             placeholder="Donation Amount"
             className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
-          
+
+          {/* THEME SELECTOR */}
           <select
             value={theme}
             onChange={(e) => setTheme(e.target.value)}
@@ -64,8 +76,15 @@ function DonationForm() {
             <option value="myCustomTheme">Custom Theme</option>
           </select>
 
-          <div className="mt-6 flex justify-center gap-4">
-            <ChariotConnect id="chariot" cid={cid} theme={theme} />
+          {/* RENDER ChariotConnect ONLY IF cid IS PROVIDED */}
+          <div className="mt-6 flex flex-col items-center gap-4">
+            {cid ? (
+              <ChariotConnect id="chariot" cid={cid} theme={theme} />
+            ) : (
+              <span className="text-sm text-gray-500">
+                Please enter a valid CID to load the payment widget.
+              </span>
+            )}
           </div>
         </form>
       </div>
